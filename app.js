@@ -1,7 +1,7 @@
 // Automatically use production URL when not running locally
 const API = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
     ? "http://localhost:5001"
-    : "https://prakriti-ai.onrender.com";  // ← your Render URL
+    : "https://prakriti-1.onrender.com";
 
 // ── Dosha card expand/collapse ──────────────────────────────────────────────
 const expanded = { vata: false, pitta: false, kapha: false };
