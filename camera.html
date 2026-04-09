@@ -584,7 +584,22 @@
             ? "http://localhost:5001"
             : "https://prakriti-1.onrender.com";
 
-        const INFER_INTERVAL_MS = 1200; // send a frame every 1.2s (avoid hammering server)
+        // Wake up Render on page load (free tier sleeps after inactivity)
+        fetch(`${API}/health`).then(() => {
+            document.getElementById('statusText').textContent = '✅ Server ready — click Start Camera';
+            document.getElementById('statusDot').className = 'status-dot live';
+        }).catch(() => {
+            document.getElementById('statusText').textContent = '⏳ Waking up server (~30s), please wait...';
+            const wake = setInterval(() => {
+                fetch(`${API}/health`).then(() => {
+                    clearInterval(wake);
+                    document.getElementById('statusText').textContent = '✅ Server ready — click Start Camera';
+                    document.getElementById('statusDot').className = 'status-dot live';
+                }).catch(() => { });
+            }, 5000);
+        });
+
+        const INFER_INTERVAL_MS = 1200; // send a frame every 1.2s
 
         const DOSHA_META = {
             'Vata': { emoji: '💨', color: '#a78bfa' },
@@ -696,7 +711,6 @@
                     topCount[data.dosha] = (topCount[data.dosha] || 0) + 1;
                     topDosha = Object.keys(topCount).reduce((a, b) => topCount[a] > topCount[b] ? a : b);
 
-                    // Infer/sec rolling
                     const now = Date.now();
                     if (now - lastInferAt >= 1000) { inferPerSec = inferTick; inferTick = 0; lastInferAt = now; }
                     inferTick++;
@@ -706,8 +720,8 @@
                     updateStats(ms);
                     drawOverlay(data);
                     setStatus('live', `Live · last inference ${ms}ms`);
-                } catch {
-                    setStatus('error', 'Cannot reach server — is server.py running?');
+                } catch (err) {
+                    setStatus('error', `Server error: ${err.message} — check Render logs`);
                 }
             }, 'image/jpeg', 0.85);
         }
