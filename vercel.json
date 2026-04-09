@@ -1,8 +1,19 @@
 {
-    "rewrites": [
+    "outputDirectory": ".",
+    "builds": [
         {
-            "source": "/(.*)",
-            "destination": "/$1"
+            "src": "index.html",
+            "use": "@vercel/static"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/camera",
+            "dest": "/camera.html"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/$1"
         }
     ]
 }
