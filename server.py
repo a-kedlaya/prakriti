@@ -14,7 +14,7 @@ from PIL import Image
 import tensorflow as tf
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins="*", allow_headers="*", methods=["GET", "POST", "OPTIONS"])
 
 # ── Load model once at startup ────────────────────────────────────────────────
 print("Loading prakriti model...")
@@ -37,8 +37,10 @@ def health():
     return jsonify({"status": "ok"})
 
 
-@app.route("/predict", methods=["POST"])
+@app.route("/predict", methods=["POST", "OPTIONS"])
 def predict():
+    if request.method == "OPTIONS":
+        return jsonify({"status": "ok"}), 200
     if "image" not in request.files:
         return jsonify({"error": "No image provided"}), 400
     try:
