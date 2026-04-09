@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+env/
+
+# Checkpoints (keep only final model)
+ckpt_p1.h5
+ckpt_p2.h5
+ckpt_p3.h5
+
+# Dataset (too large for git)
+dataset/
+utk_faces/
+
+# Augmented data
+aug_*.jpg
