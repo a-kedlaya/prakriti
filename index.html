@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prakriti AI — Know Your Dosha</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- ── NAV ── -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <div class="logo">
+        <span class="logo-icon">🌿</span>
+        <span class="logo-text">Prakriti<span class="logo-accent">AI</span></span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#doshas">Doshas</a></li>
+        <li><a href="#analyze">Analyze</a></li>
+      </ul>
+      <button class="btn-bot" onclick="openBot()">
+        <span>🤖</span> Prakriti Bot
+      </button>
+      <a href="camera.html" class="btn-cam-nav">📷 Live Cam</a>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <div class="orb orb1"></div>
+      <div class="orb orb2"></div>
+      <div class="orb orb3"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge">✨ Ancient Wisdom · Modern AI</div>
+      <h1 class="hero-title">
+        Discover Your<br />
+        <span class="gradient-text">Prakriti Dosha</span>
+      </h1>
+      <p class="hero-sub">
+        Rooted in 5,000 years of Ayurvedic science, your Prakriti is your unique
+        mind-body constitution. Let AI help you understand it.
+      </p>
+      <div class="hero-actions">
+        <a href="#analyze" class="btn-primary">Analyze My Dosha →</a>
+        <a href="#doshas" class="btn-ghost">Learn More</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">3</span><span class="stat-label">Doshas</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num">5K+</span><span class="stat-label">Years of Science</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num">AI</span><span class="stat-label">Powered</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="mandala-ring ring1"></div>
+      <div class="mandala-ring ring2"></div>
+      <div class="mandala-ring ring3"></div>
+      <div class="mandala-center">🕉️</div>
+    </div>
+  </section>
+
+  <!-- ── DOSHAS ── -->
+  <section class="doshas-section" id="doshas">
+    <div class="section-header">
+      <p class="section-tag">The Three Energies</p>
+      <h2 class="section-title">Understanding the Doshas</h2>
+      <p class="section-sub">Every person is a unique blend of three fundamental bio-energies called Doshas.</p>
+    </div>
+
+    <div class="doshas-grid">
+
+      <!-- VATA -->
+      <div class="dosha-card vata-card" onclick="expandDosha('vata')">
+        <div class="card-glow"></div>
+        <div class="card-header">
+          <div class="dosha-icon-wrap vata-icon-wrap">
+            <span class="dosha-icon">💨</span>
+          </div>
+          <div class="dosha-elements">
+            <span class="element">Air</span>
+            <span class="element-plus">+</span>
+            <span class="element">Space</span>
+          </div>
+        </div>
+        <h3 class="dosha-name">Vata</h3>
+        <p class="dosha-tagline">The Energy of Movement</p>
+        <div class="qualities-row">
+          <span class="quality">Light</span>
+          <span class="quality">Dry</span>
+          <span class="quality">Cold</span>
+          <span class="quality">Fast</span>
+          <span class="quality">Mobile</span>
+        </div>
+        <div class="dosha-body" id="vata-body">
+          <div class="info-block">
+            <h4>🧠 Controls</h4>
+            <ul>
+              <li>Movement — breathing, blood flow, nerve signals</li>
+              <li>Thinking and creativity</li>
+            </ul>
+          </div>
+          <div class="info-block">
+            <h4>🧍 Dominant Traits</h4>
+            <ul>
+              <li>Thin body, fast talkers</li>
+              <li>Energetic but tire quickly</li>
+              <li>Creative and imaginative</li>
+            </ul>
+          </div>
+          <div class="info-block imbalance">
+            <h4>⚠️ When Imbalanced</h4>
+            <ul>
+              <li>😟 Anxiety & restlessness</li>
+              <li>Dry skin, constipation</li>
+              <li>Insomnia</li>
+            </ul>
+          </div>
+        </div>
+        <button class="card-toggle">Learn More ↓</button>
+      </div>
+
+      <!-- PITTA -->
+      <div class="dosha-card pitta-card featured-card" onclick="expandDosha('pitta')">
+        <div class="featured-badge">Most Common</div>
+        <div class="card-glow"></div>
+        <div class="card-header">
+          <div class="dosha-icon-wrap pitta-icon-wrap">
+            <span class="dosha-icon">🔥</span>
+          </div>
+          <div class="dosha-elements">
+            <span class="element">Fire</span>
+            <span class="element-plus">+</span>
+            <span class="element">Water</span>
+          </div>
+        </div>
+        <h3 class="dosha-name">Pitta</h3>
+        <p class="dosha-tagline">The Energy of Transformation</p>
+        <div class="qualities-row">
+          <span class="quality">Hot</span>
+          <span class="quality">Sharp</span>
+          <span class="quality">Intense</span>
+          <span class="quality">Oily</span>
+        </div>
+        <div class="dosha-body" id="pitta-body">
+          <div class="info-block">
+            <h4>🧠 Controls</h4>
+            <ul>
+              <li>Digestion and metabolism</li>
+              <li>Body temperature</li>
+              <li>Intelligence and focus</li>
+            </ul>
+          </div>
+          <div class="info-block">
+            <h4>🧍 Dominant Traits</h4>
+            <ul>
+              <li>Medium build, strong digestion</li>
+              <li>Smart, focused, ambitious</li>
+              <li>Natural leaders</li>
+            </ul>
+          </div>
+          <div class="info-block imbalance">
+            <h4>⚠️ When Imbalanced</h4>
+            <ul>
+              <li>😡 Anger & irritability</li>
+              <li>Acidity, ulcers</li>
+              <li>Excess heat, sweating</li>
+            </ul>
+          </div>
+        </div>
+        <button class="card-toggle">Learn More ↓</button>
+      </div>
+
+      <!-- KAPHA -->
+      <div class="dosha-card kapha-card" onclick="expandDosha('kapha')">
+        <div class="card-glow"></div>
+        <div class="card-header">
+          <div class="dosha-icon-wrap kapha-icon-wrap">
+            <span class="dosha-icon">🌍</span>
+          </div>
+          <div class="dosha-elements">
+            <span class="element">Earth</span>
+            <span class="element-plus">+</span>
+            <span class="element">Water</span>
+          </div>
+        </div>
+        <h3 class="dosha-name">Kapha</h3>
+        <p class="dosha-tagline">The Energy of Structure</p>
+        <div class="qualities-row">
+          <span class="quality">Heavy</span>
+          <span class="quality">Slow</span>
+          <span class="quality">Stable</span>
+          <span class="quality">Cool</span>
+          <span class="quality">Smooth</span>
+        </div>
+        <div class="dosha-body" id="kapha-body">
+          <div class="info-block">
+            <h4>🧠 Controls</h4>
+            <ul>
+              <li>Body structure — bones, muscles</li>
+              <li>Immunity and strength</li>
+              <li>Emotions like calmness and love</li>
+            </ul>
+          </div>
+          <div class="info-block">
+            <h4>🧍 Dominant Traits</h4>
+            <ul>
+              <li>Strong, heavier body</li>
+              <li>Calm, patient, loyal</li>
+              <li>Good stamina</li>
+            </ul>
+          </div>
+          <div class="info-block imbalance">
+            <h4>⚠️ When Imbalanced</h4>
+            <ul>
+              <li>😴 Laziness & lethargy</li>
+              <li>Weight gain</li>
+              <li>Congestion, cold</li>
+            </ul>
+          </div>
+        </div>
+        <button class="card-toggle">Learn More ↓</button>
+      </div>
+
+    </div>
+
+    <!-- Dual Doshas note -->
+    <div class="dual-note">
+      <span class="dual-icon">⚡</span>
+      <p>Many people are <strong>dual-dosha</strong> — a blend of two energies like <em>Vata-Kapha</em> or
+        <em>Pitta-Kapha</em>. Our AI model recognizes all combinations.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── ANALYZE ── -->
+  <section class="analyze-section" id="analyze">
+    <div class="analyze-inner">
+      <div class="analyze-text">
+        <p class="section-tag">AI-Powered Analysis</p>
+        <h2 class="section-title">Analyze Your Prakriti</h2>
+        <p class="section-sub">Upload a clear face photo and our deep learning model will predict your dominant Dosha
+          type with high accuracy.</p>
+        <ul class="analyze-tips">
+          <li>📸 Use a well-lit, front-facing photo</li>
+          <li>😐 Neutral expression works best</li>
+          <li>🚫 Avoid heavy filters or makeup</li>
+        </ul>
+        <button class="btn-bot-large" onclick="openBot()">
+          <span class="bot-btn-icon">🤖</span>
+          <div>
+            <div class="bot-btn-title">Open Prakriti Bot</div>
+            <div class="bot-btn-sub">Chat · Ask · Discover</div>
+          </div>
+          <span class="btn-arrow">→</span>
+        </button>
+        <a href="camera.html" class="btn-bot-large" style="text-decoration:none;margin-top:0.8rem">
+          <span class="bot-btn-icon">📷</span>
+          <div>
+            <div class="bot-btn-title">Live Camera Bot</div>
+            <div class="bot-btn-sub">Real-time Dosha detection via webcam</div>
+          </div>
+          <span class="btn-arrow" style="color:#4ade80">→</span>
+        </a>
+      </div>
+      <div class="upload-box" id="uploadBox">
+        <div class="upload-inner" id="uploadInner">
+          <div class="upload-icon">📷</div>
+          <p class="upload-title">Drop your photo here</p>
+          <p class="upload-sub">or click to browse</p>
+          <input type="file" id="fileInput" accept="image/*" hidden onchange="handleFile(event)" />
+          <button class="btn-upload" onclick="document.getElementById('fileInput').click()">Choose Photo</button>
+        </div>
+        <div class="upload-preview" id="uploadPreview" style="display:none">
+          <img id="previewImg" src="" alt="Preview" />
+          <div class="preview-overlay">
+            <div class="analyzing-spinner" id="spinner" style="display:none">
+              <div class="spinner-ring"></div>
+              <p>Analyzing...</p>
+            </div>
+            <div class="result-box" id="resultBox" style="display:none"></div>
+          </div>
+          <button class="btn-reset" onclick="resetUpload()">↩ Try Another</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <span>🌿</span> Prakriti<span class="logo-accent">AI</span>
+      </div>
+      <p class="footer-text">Bridging ancient Ayurvedic wisdom with modern artificial intelligence.</p>
+      <p class="footer-copy">© 2026 PrakritiAI · Built with ❤️ and TensorFlow</p>
+    </div>
+  </footer>
+
+  <!-- ── BOT MODAL ── -->
+  <div class="bot-overlay" id="botOverlay" onclick="closeBot(event)">
+    <div class="bot-modal" id="botModal">
+      <div class="bot-header">
+        <div class="bot-avatar">🤖</div>
+        <div>
+          <div class="bot-name">Prakriti Bot</div>
+          <div class="bot-status"><span class="status-dot"></span> Online</div>
+        </div>
+        <button class="bot-close" onclick="closeBot()">✕</button>
+      </div>
+      <div class="bot-messages" id="botMessages">
+        <div class="bot-msg bot">
+          <div class="msg-bubble">
+            Namaste! 🙏 I'm your Prakriti guide. Ask me anything about Doshas, Ayurveda, or upload a photo to discover
+            your body type!
+          </div>
+        </div>
+        <div class="bot-msg bot">
+          <div class="msg-bubble">
+            Try asking:<br />
+            • <em>"What is Vata dosha?"</em><br />
+            • <em>"How do I balance Pitta?"</em><br />
+            • <em>"What foods suit Kapha?"</em>
+          </div>
+        </div>
+      </div>
+      <div class="bot-input-row">
+        <input type="text" id="botInput" placeholder="Ask about your Dosha..."
+          onkeydown="if(event.key==='Enter') sendMsg()" />
+        <button class="bot-send" onclick="sendMsg()">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>

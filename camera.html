@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prakriti Live Cam</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --vata: #a78bfa;
+            --pitta: #fb923c;
+            --kapha: #4ade80;
+            --bg: #0a0a0f;
+            --card: #14141e;
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #e8e8f0;
+            --muted: #8888aa;
+            --gold: #f5c842;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Nav */
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(10, 10, 15, 0.9);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(16px);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .nav-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+        }
+
+        .nav-logo span {
+            color: var(--gold);
+        }
+
+        .nav-back {
+            margin-left: auto;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 0.35rem 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .nav-back:hover {
+            color: var(--text);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Layout */
+        .page {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .page-sub {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Main grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 1.5rem;
+        }
+
+        @media(max-width:720px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Camera box */
+        .cam-wrap {
+            position: relative;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            aspect-ratio: 4/3;
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transform: scaleX(-1);
+        }
+
+        #overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        /* Start screen */
+        .cam-start {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            background: var(--card);
+        }
+
+        .cam-start-icon {
+            font-size: 3.5rem;
+            opacity: 0.5;
+        }
+
+        .cam-start p {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #7c6af7, #5b4fcf);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 0.7rem 1.8rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 20px rgba(124, 106, 247, 0.4);
+        }
+
+        .btn-start:hover {
+            transform: scale(1.05);
+        }
+
+        /* Controls bar */
+        .controls {
+            display: flex;
+            gap: 0.7rem;
+            margin-top: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-ctrl {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 50px;
+            padding: 0.45rem 1rem;
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-ctrl:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-ctrl.active {
+            border-color: #7c6af7;
+            color: var(--vata);
+        }
+
+        .btn-ctrl.danger {
+            border-color: rgba(248, 113, 113, 0.3);
+            color: #f87171;
+        }
+
+        .btn-ctrl.danger:hover {
+            background: rgba(248, 113, 113, 0.1);
+        }
+
+        /* Side panel */
+        .panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Result card */
+        .result-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.2rem;
+        }
+
+        .result-card h3 {
+            font-size: 0.72rem;
+            color: var(--muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.8rem;
+        }
+
+        .dosha-display {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .dosha-emoji {
+            font-size: 2.2rem;
+        }
+
+        .dosha-name-big {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .dosha-conf {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 0.1rem;
+        }
+
+        .conf-bar-wrap {
+            margin-bottom: 1rem;
+        }
+
+        .conf-bar-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-bottom: 0.3rem;
+        }
+
+        .conf-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .conf-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+
+        .top3-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .top3-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .top3-rank {
+            font-size: 0.7rem;
+            color: var(--muted);
+            width: 14px;
+        }
+
+        .top3-name {
+            font-size: 0.82rem;
+            flex: 1;
+        }
+
+        .top3-pct {
+            font-size: 0.78rem;
+            color: var(--muted);
+        }
+
+        .top3-bar {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .top3-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.4s;
+        }
+
+        /* LED indicators */
+        .led-panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.2rem;
+        }
+
+        .led-panel h3 {
+            font-size: 0.72rem;
+            color: var(--muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .leds {
+            display: flex;
+            gap: 1.2rem;
+            justify-content: center;
+        }
+
+        .led-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .led {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .led.on-vata {
+            background: var(--vata);
+            box-shadow: 0 0 16px var(--vata);
+            border-color: var(--vata);
+        }
+
+        .led.on-pitta {
+            background: var(--pitta);
+            box-shadow: 0 0 16px var(--pitta);
+            border-color: var(--pitta);
+        }
+
+        .led.on-kapha {
+            background: var(--kapha);
+            box-shadow: 0 0 16px var(--kapha);
+            border-color: var(--kapha);
+        }
+
+        .led-label {
+            font-size: 0.72rem;
+            color: var(--muted);
+        }
+
+        /* Stats */
+        .stats-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.2rem;
+        }
+
+        .stats-card h3 {
+            font-size: 0.72rem;
+            color: var(--muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.8rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 0.6rem 0.8rem;
+        }
+
+        .stat-val {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .stat-lbl {
+            font-size: 0.7rem;
+            color: var(--muted);
+            margin-top: 0.1rem;
+        }
+
+        /* Status bar */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--muted);
+            flex-shrink: 0;
+        }
+
+        .status-dot.live {
+            background: var(--kapha);
+            animation: blink 1.5s infinite;
+        }
+
+        .status-dot.error {
+            background: #f87171;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.3
+            }
+        }
+
+        /* Placeholder state */
+        .placeholder {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        .placeholder-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="nav">
+        <div class="nav-logo">🌿 Prakriti<span>AI</span></div>
+        <a href="index.html" class="nav-back">← Back to Home</a>
+    </nav>
+
+    <div class="page">
+        <h1 class="page-title">📷 Live Prakriti Detection</h1>
+        <p class="page-sub">Real-time Dosha analysis using your webcam and the trained ML model.</p>
+
+        <div class="grid">
+
+            <!-- Camera -->
+            <div>
+                <div class="cam-wrap">
+                    <video id="video" autoplay playsinline muted></video>
+                    <canvas id="overlay"></canvas>
+                    <div class="cam-start" id="camStart">
+                        <div class="cam-start-icon">📷</div>
+                        <p>Camera is off</p>
+                        <button class="btn-start" onclick="startCamera()">Start Camera</button>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-ctrl" id="btnPause" onclick="togglePause()" style="display:none">⏸ Pause</button>
+                    <button class="btn-ctrl" id="btnFlip" onclick="toggleFlip()" style="display:none">🔄 Flip</button>
+                    <button class="btn-ctrl danger" id="btnStop" onclick="stopCamera()" style="display:none">⏹
+                        Stop</button>
+                </div>
+
+                <div class="status-bar">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="statusText">Camera off — click Start Camera</span>
+                </div>
+            </div>
+
+            <!-- Side panel -->
+            <div class="panel">
+
+                <!-- Result -->
+                <div class="result-card">
+                    <h3>Detected Prakriti</h3>
+                    <div id="resultArea">
+                        <div class="placeholder">
+                            <div class="placeholder-icon">🕉️</div>
+                            Start the camera to begin detection
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LEDs -->
+                <div class="led-panel">
+                    <h3>Dosha Indicators</h3>
+                    <div class="leds">
+                        <div class="led-item">
+                            <div class="led" id="ledVata"></div>
+                            <span class="led-label">Vata</span>
+                        </div>
+                        <div class="led-item">
+                            <div class="led" id="ledPitta"></div>
+                            <span class="led-label">Pitta</span>
+                        </div>
+                        <div class="led-item">
+                            <div class="led" id="ledKapha"></div>
+                            <span class="led-label">Kapha</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-card">
+                    <h3>Session Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-val" id="statFrames">0</div>
+                            <div class="stat-lbl">Frames analyzed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-val" id="statFPS">—</div>
+                            <div class="stat-lbl">Predictions/sec</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-val" id="statTop">—</div>
+                            <div class="stat-lbl">Top dosha</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-val" id="statConf">—</div>
+                            <div class="stat-lbl">Avg confidence</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ── Config ────────────────────────────────────────────────────────────────────
+        const API = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+            ? "http://localhost:5001"
+            : "https://prakriti-ai.onrender.com"; // ← your Render URL
+
+        const INFER_INTERVAL_MS = 1200; // send a frame every 1.2s (avoid hammering server)
+
+        const DOSHA_META = {
+            'Vata': { emoji: '💨', color: '#a78bfa' },
+            'Pitta': { emoji: '🔥', color: '#fb923c' },
+            'Kapha': { emoji: '🌍', color: '#4ade80' },
+            'Vata-Kapha': { emoji: '💨🌍', color: '#a78bfa' },
+            'Pitta-Kapha': { emoji: '🔥🌍', color: '#fb923c' },
+            'Vata-Pitta': { emoji: '💨🔥', color: '#f5c842' },
+        };
+
+        // ── State ─────────────────────────────────────────────────────────────────────
+        let stream = null;
+        let inferTimer = null;
+        let paused = false;
+        let flipped = true;
+        let frameCount = 0;
+        let confSum = 0;
+        let topDosha = null;
+        let topCount = {};
+        let lastInferAt = 0;
+        let inferPerSec = 0;
+        let inferTick = 0;
+
+        const video = document.getElementById('video');
+        const overlay = document.getElementById('overlay');
+        const ctx = overlay.getContext('2d');
+
+        // ── Camera ────────────────────────────────────────────────────────────────────
+        async function startCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 640, height: 480 }, audio: false });
+                video.srcObject = stream;
+                await video.play();
+
+                document.getElementById('camStart').style.display = 'none';
+                document.getElementById('btnPause').style.display = '';
+                document.getElementById('btnFlip').style.display = '';
+                document.getElementById('btnStop').style.display = '';
+
+                setStatus('live', 'Live — analyzing every 1.2s');
+                startInference();
+            } catch (err) {
+                setStatus('error', 'Camera access denied — allow camera in browser settings');
+            }
+        }
+
+        function stopCamera() {
+            if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+            clearInterval(inferTimer);
+            video.srcObject = null;
+            ctx.clearRect(0, 0, overlay.width, overlay.height);
+            document.getElementById('camStart').style.display = 'flex';
+            document.getElementById('btnPause').style.display = 'none';
+            document.getElementById('btnFlip').style.display = 'none';
+            document.getElementById('btnStop').style.display = 'none';
+            setStatus('', 'Camera off — click Start Camera');
+            resetLEDs();
+        }
+
+        function togglePause() {
+            paused = !paused;
+            document.getElementById('btnPause').textContent = paused ? '▶ Resume' : '⏸ Pause';
+            document.getElementById('btnPause').classList.toggle('active', paused);
+            setStatus(paused ? '' : 'live', paused ? 'Paused' : 'Live — analyzing every 1.2s');
+        }
+
+        function toggleFlip() {
+            flipped = !flipped;
+            video.style.transform = flipped ? 'scaleX(-1)' : 'scaleX(1)';
+        }
+
+        // ── Inference loop ────────────────────────────────────────────────────────────
+        function startInference() {
+            inferTimer = setInterval(async () => {
+                if (paused || !stream) return;
+                await runInference();
+            }, INFER_INTERVAL_MS);
+        }
+
+        async function runInference() {
+            // Capture frame from video into a canvas
+            const cap = document.createElement('canvas');
+            cap.width = 224;
+            cap.height = 224;
+            const c = cap.getContext('2d');
+
+            // Mirror-correct before sending (flip back if mirrored)
+            if (flipped) {
+                c.translate(224, 0);
+                c.scale(-1, 1);
+            }
+            c.drawImage(video, 0, 0, 224, 224);
+
+            cap.toBlob(async (blob) => {
+                if (!blob) return;
+                const form = new FormData();
+                form.append('image', blob, 'frame.jpg');
+
+                try {
+                    const t0 = performance.now();
+                    const res = await fetch(`${API}/predict`, { method: 'POST', body: form });
+                    const data = await res.json();
+                    const ms = Math.round(performance.now() - t0);
+
+                    if (data.error) { setStatus('error', `Server error: ${data.error}`); return; }
+
+                    frameCount++;
+                    confSum += data.confidence;
+                    topCount[data.dosha] = (topCount[data.dosha] || 0) + 1;
+                    topDosha = Object.keys(topCount).reduce((a, b) => topCount[a] > topCount[b] ? a : b);
+
+                    // Infer/sec rolling
+                    const now = Date.now();
+                    if (now - lastInferAt >= 1000) { inferPerSec = inferTick; inferTick = 0; lastInferAt = now; }
+                    inferTick++;
+
+                    updateResult(data);
+                    updateLEDs(data.dosha);
+                    updateStats(ms);
+                    drawOverlay(data);
+                    setStatus('live', `Live · last inference ${ms}ms`);
+                } catch {
+                    setStatus('error', 'Cannot reach server — is server.py running?');
+                }
+            }, 'image/jpeg', 0.85);
+        }
+
+        // ── UI updates ────────────────────────────────────────────────────────────────
+        function updateResult(data) {
+            const meta = DOSHA_META[data.dosha] || { emoji: '🕉️', color: '#fff' };
+            const top3Html = data.top3.map((t, i) => {
+                const m = DOSHA_META[t.dosha] || {};
+                return `<div class="top3-item">
+      <span class="top3-rank">#${i + 1}</span>
+      <span class="top3-name">${m.emoji || ''} ${t.dosha}</span>
+      <div class="top3-bar"><div class="top3-bar-fill" style="width:${t.confidence}%;background:${m.color || '#fff'}"></div></div>
+      <span class="top3-pct">${t.confidence}%</span>
+    </div>`;
+            }).join('');
+
+            document.getElementById('resultArea').innerHTML = `
+    <div class="dosha-display">
+      <span class="dosha-emoji">${meta.emoji}</span>
+      <div>
+        <div class="dosha-name-big" style="color:${meta.color}">${data.dosha}</div>
+        <div class="dosha-conf">${data.confidence}% confidence</div>
+      </div>
+    </div>
+    <div class="conf-bar-wrap">
+      <div class="conf-bar-label"><span>Confidence</span><span>${data.confidence}%</span></div>
+      <div class="conf-bar"><div class="conf-bar-fill" style="width:${data.confidence}%;background:${meta.color}"></div></div>
+    </div>
+    <div class="top3-list">${top3Html}</div>
+  `;
+        }
+
+        function updateLEDs(dosha) {
+            document.getElementById('ledVata').className = 'led' + (dosha.includes('Vata') ? ' on-vata' : '');
+            document.getElementById('ledPitta').className = 'led' + (dosha.includes('Pitta') ? ' on-pitta' : '');
+            document.getElementById('ledKapha').className = 'led' + (dosha.includes('Kapha') ? ' on-kapha' : '');
+        }
+
+        function resetLEDs() {
+            ['ledVata', 'ledPitta', 'ledKapha'].forEach(id => document.getElementById(id).className = 'led');
+        }
+
+        function updateStats(ms) {
+            document.getElementById('statFrames').textContent = frameCount;
+            document.getElementById('statFPS').textContent = inferPerSec || '~1';
+            document.getElementById('statTop').textContent = topDosha || '—';
+            document.getElementById('statConf').textContent = frameCount ? Math.round(confSum / frameCount) + '%' : '—';
+        }
+
+        function drawOverlay(data) {
+            // Sync canvas size to video display size
+            overlay.width = video.offsetWidth;
+            overlay.height = video.offsetHeight;
+            ctx.clearRect(0, 0, overlay.width, overlay.height);
+
+            const meta = DOSHA_META[data.dosha] || { color: '#fff', emoji: '🕉️' };
+
+            // Bottom banner
+            const bh = 52;
+            ctx.fillStyle = 'rgba(0,0,0,0.55)';
+            ctx.fillRect(0, overlay.height - bh, overlay.width, bh);
+
+            ctx.fillStyle = meta.color;
+            ctx.font = 'bold 18px Inter, sans-serif';
+            ctx.fillText(`${meta.emoji}  ${data.dosha}`, 14, overlay.height - bh + 22);
+
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.font = '13px Inter, sans-serif';
+            ctx.fillText(`${data.confidence}% confidence`, 14, overlay.height - bh + 40);
+
+            // Top-right confidence bar
+            const bw = 120, bx = overlay.width - bw - 12, by = 12;
+            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+            roundRect(ctx, bx, by, bw, 8, 4); ctx.fill();
+            ctx.fillStyle = meta.color;
+            roundRect(ctx, bx, by, bw * (data.confidence / 100), 8, 4); ctx.fill();
+        }
+
+        function roundRect(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+        }
+
+        function setStatus(type, msg) {
+            const dot = document.getElementById('statusDot');
+            dot.className = 'status-dot' + (type ? ' ' + type : '');
+            document.getElementById('statusText').textContent = msg;
+        }
+    </script>
+</body>
+
+</html>
